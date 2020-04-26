@@ -1,3 +1,6 @@
+PrintKey
+===
+
 This application is for capturing desktop area (or partial) into a image file or clipboard, also with basic annotaion tools for capturted image.
 
 It is based on wxWidgets.
