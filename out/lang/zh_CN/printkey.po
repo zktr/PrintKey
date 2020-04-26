@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: printkey\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-26 21:53+0800\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Kevin Wu <exlearn@163.com>\n"
+"Language-Team: Kevin Wu <exlearn@163.com>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 1.6.8\n"
+"X-Poedit-SearchPath-0: ../../..\n"
+"X-Poedit-SearchPathExcluded-0: ../../../wxWidgets\n"
+
+#: ../../../previewwnd.cpp:76 ../../../ui/settingdlg.h:45
+msgid "Settings"
+msgstr "设置"
+
+#: ../../../previewwnd.cpp:84
+msgid "Exit"
+msgstr "退出"
+
+#: ../../../previewwnd.cpp:201
+msgid "Press PrtSc Key on Keybaord to Print Screen"
+msgstr "按键盘上的PrtSc键截取屏幕"
+
+#: ../../../settingdlg.cpp:145 ../../../ui/settingdlg.cpp:140
+msgid "Save Path"
+msgstr "图片保存目录"
+
+#: ../../../settingdlg.cpp:151 ../../../ui/settingdlg.cpp:146
+msgid "..."
+msgstr ""
+
+#: ../../../settingdlg.cpp:154 ../../../ui/settingdlg.cpp:149
+msgid "Hot Key"
+msgstr "热键"
+
+#: ../../../settingdlg.cpp:164 ../../../settingdlg.cpp:371
+#: ../../../ui/settingdlg.cpp:159
+msgid "Press Key or Key Combination"
+msgstr "按键盘单一按键或组合键"
+
+#: ../../../settingdlg.cpp:175 ../../../ui/settingdlg.cpp:170
+msgid "Or"
+msgstr "或使用"
+
+#: ../../../settingdlg.cpp:179 ../../../ui/settingdlg.cpp:174
+msgid "Shift"
+msgstr ""
+
+#: ../../../settingdlg.cpp:184 ../../../ui/settingdlg.cpp:179
+msgid "Ctrl"
+msgstr ""
+
+#: ../../../settingdlg.cpp:189 ../../../ui/settingdlg.cpp:184
+msgid "Alt"
+msgstr ""
+
+#: ../../../settingdlg.cpp:194 ../../../ui/settingdlg.cpp:189
+msgid "PrtSc"
+msgstr ""
+
+#: ../../../settingdlg.cpp:200 ../../../ui/settingdlg.cpp:195
+msgid "Auto Start Up"
+msgstr "开机自启"
+
+#: ../../../settingdlg.cpp:207 ../../../ui/settingdlg.cpp:202
+msgid "&OK"
+msgstr "确认"
+
+#: ../../../settingdlg.cpp:210 ../../../ui/settingdlg.cpp:205
+msgid "&Cancel"
+msgstr "取消"
+
+#: ../../../settingdlg.cpp:288
+msgid "Please choose a directory"
+msgstr "请选择图片默认保存位置"
+
+#: ../../../settingdlg.cpp:351 ../../../settingdlg.cpp:365
+msgid "Unsupported Key"
+msgstr "不支持此按键"
+
+#: ../../../previewwnd.h:65 ../../../ui/previewwnd.h:38
+msgid "Preview"
+msgstr "预览"
+
+#: ../../../settingdlg.h:45
+msgid "Print Key Settings"
+msgstr "Print Key 设置"

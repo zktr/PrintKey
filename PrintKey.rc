@@ -1,0 +1,49 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+WXICON_AAA              ICON                    "PrintKey.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+#ifdef WIN32
+#include "afxres.h"
+#endif
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Keivn Wu"
+            VALUE "FileDescription", "PrintKey"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "PrintKey"
+            VALUE "LegalCopyright", "(C) Kevin Wu"
+            VALUE "LegalTrademarks", "exlearn"
+            VALUE "OriginalFilename", "PrintKey"
+            VALUE "ProductName", "PrintKey"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
