@@ -23,7 +23,7 @@
 
 #include "wx/gdicmn.h""
 #include "wx/taskbar.h"
-
+#include "wx/dcgraph.h"
 
 class PKTaskBarIcon : public wxTaskBarIcon
 {
@@ -141,6 +141,10 @@ private:
 	PKTaskBarIcon   *m_taskBarIcon;
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
 	PKTaskBarIcon   *m_dockIcon;
+#endif
+
+#if wxUSE_GRAPHICS_CONTEXT
+	wxGraphicsRenderer* m_renderer;
 #endif
 
 private:

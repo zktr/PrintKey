@@ -24,6 +24,7 @@
 #include "wx/display.h"
 #include "wx/utils.h"
 #include "wx/tokenzr.h"
+#include "wx/dcbuffer.h"
 
 ////@begin includes
 ////@end includes
@@ -204,6 +205,10 @@ void PreviewWnd::Init()
 	m_dockIcon = new MyTaskBarIcon(wxTBI_DOCK);
 	m_dockIcon->SetIcon(wxICON(sample));
 #endif
+
+#if wxUSE_GRAPHICS_CONTEXT
+	m_renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
 }
 
 
@@ -299,24 +304,51 @@ void PreviewWnd::OnMotion( wxMouseEvent& event )
 
 void PreviewWnd::OnPaint( wxPaintEvent& event )
 {
-	wxPaintDC dc(this);
+	wxBufferedPaintDC pdc(this);
 
-	dc.SetBackgroundMode(wxSOLID);//*/wxTRANSPARENT);
-	dc.SetBackground(*wxBLACK_BRUSH);
+#if wxUSE_GRAPHICS_CONTEXT
+	wxGCDC gdc;
 
+	if (m_renderer)
+	{
+		wxGraphicsContext* context;
+		context = m_renderer->CreateContext(pdc);
+
+		gdc.SetBackground(GetBackgroundColour());
+		gdc.SetGraphicsContext(context);
+	}
+
+	wxDC &dc = m_renderer ? static_cast<wxDC&>(gdc) : pdc;
+#else
+	wxDC &dc = pdc;
+#endif
+
+	PrepareDC(dc);
 	dc.Clear();
+
+	//dc.SetBackgroundMode(wxSOLID);//*/wxTRANSPARENT);
+	//dc.SetBackground(*wxBLACK_BRUSH);
 
 	dc.DrawBitmap(bg, 0, 0, false);
 
-	int cx, cy;
-	GetClientSize(&cx, &cy);
+	wxRect rc = GetClientRect();
+
+#if wxUSE_GRAPHICS_CONTEXT
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxBrush(wxColour(0, 0, 0, 150)));
+	dc.DrawRectangle(rc);
+#endif
 
 	dc.SetPen(wxPen(wxColour(255, 210, 2), 4));
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	dc.DrawRectangle(rc);
 
-	dc.DrawLine(0, 0, 0, cy);
-	dc.DrawLine(0, cy, cx, cy);
-	dc.DrawLine(0, 0, cx, 0);
-	dc.DrawLine(cx, 0, cx, cy);
+	//int cx, cy;
+	//GetClientSize(&cx, &cy);
+	//dc.DrawLine(0, 0, 0, cy);
+	//dc.DrawLine(0, cy, cx, cy);
+	//dc.DrawLine(0, 0, cx, 0);
+	//dc.DrawLine(cx, 0, cx, cy);
 }
 
 
@@ -493,22 +525,23 @@ void PreviewWnd::onHookedKeyPressed(wxCommandEvent& event)
 		DeleteDC(hDC);
 	}
 
-	void *pAlpha = malloc(rc.width*rc.height);
-	memset(pAlpha, 128, rc.width*rc.height);
-
 	if (bpp == 32)
 	{
 		// change RGBA to RGB
 		BYTE * data = (BYTE*) pData;
 		for (int i = 1; i < rc.width*rc.height; i++)
 		{
-			data[i * 3] = data[i * 4];
+			data[i * 3] = data[i * 4 + 2];
 			data[i * 3 + 1] = data[i * 4 + 1];
-			data[i * 3 + 2] = data[i * 4 + 2];
+			data[i * 3 + 2] = data[i * 4];
 		}
 	}
 
-	wxImage screen(rc.width, rc.height, (BYTE*) pData, (BYTE*) pAlpha, false);
+	//void *pAlpha = malloc(rc.width*rc.height);
+	//memset(pAlpha, 128, rc.width*rc.height);
+
+	//wxImage screen(rc.width, rc.height, (BYTE*) pData, (BYTE*) pAlpha, false);
+	wxImage screen(rc.width, rc.height, (BYTE*) pData, false);
 
 	bg = screen.Mirror(false);
 

@@ -438,6 +438,9 @@ void SettingDlg::OnOkClick( wxCommandEvent& event )
 
 void SettingDlg::OnButton1Click( wxCommandEvent& event )
 {
+	m_hint->SetForegroundColour(wxColour(0, 128, 255));
+	m_hint->SetLabel(_("Press Key or Key Combination"));
+
 	wxString key;
 
 	if (m_shift->GetValue())
