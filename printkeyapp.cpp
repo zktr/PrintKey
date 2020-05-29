@@ -156,8 +156,17 @@ int PrintKeyApp::OnExit()
 
 void PrintKeyApp::LoadConfig()
 {
-	m_config.imagePath = wxPathOnly(wxStandardPaths::Get().GetDocumentsDir());
-	m_config.hotKey = wxEmptyString;
+	wxString userPicturesPath = wxPathOnly(wxStandardPaths::Get().GetDocumentsDir()) + wxFILE_SEP_PATH + wxT("Pictures");
+	if (!wxDirExists(userPicturesPath))
+	{
+		userPicturesPath = wxPathOnly(wxStandardPaths::Get().GetDocumentsDir()) + wxFILE_SEP_PATH + wxT("Documents");
+
+		if (!wxDirExists(userPicturesPath))
+			userPicturesPath = wxPathOnly(wxStandardPaths::Get().GetDocumentsDir());
+	}
+
+	m_config.imagePath = userPicturesPath;
+	m_config.hotKey = wxT("PrtSc");
 
 	if (::wxFileExists(m_configFilePath))
 	{
@@ -165,8 +174,8 @@ void PrintKeyApp::LoadConfig()
 		wxFileConfig config(fis);
 
 		config.SetPath(wxT("/PrintKey"));
-		config.Read(wxT("ImagePage"), &m_config.imagePath, wxPathOnly(wxStandardPaths::Get().GetDocumentsDir()));
-		config.Read(wxT("HotKey"), &m_config.hotKey, wxEmptyString);
+		config.Read(wxT("ImagePage"), &m_config.imagePath, userPicturesPath);
+		config.Read(wxT("HotKey"), &m_config.hotKey, wxT("PrtSc"));
 	}
 
 	GetAutoStart();
