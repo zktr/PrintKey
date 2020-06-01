@@ -209,6 +209,9 @@ void PreviewWnd::Init()
 #if wxUSE_GRAPHICS_CONTEXT
 	m_renderer = wxGraphicsRenderer::GetDefaultRenderer();
 #endif
+
+	m_rubberBand = false;
+	m_selectedArea = wxRect(0, 0, 0, 0);
 }
 
 
@@ -269,6 +272,10 @@ wxIcon PreviewWnd::GetIconResource( const wxString& name )
 
 void PreviewWnd::OnLeftDown( wxMouseEvent& event )
 {
+	m_startPoint = event.GetPosition();
+	m_currentPoint = m_startPoint;
+	m_rubberBand = true;
+	CaptureMouse();
 }
 
 
@@ -278,10 +285,28 @@ void PreviewWnd::OnLeftDown( wxMouseEvent& event )
 
 void PreviewWnd::OnLeftUp( wxMouseEvent& event )
 {
-////@begin wxEVT_LEFT_UP event handler for ID_PREVIEWWND in PreviewWnd.
-    // Before editing this code, remove the block markers.
-    event.Skip();
-////@end wxEVT_LEFT_UP event handler for ID_PREVIEWWND in PreviewWnd. 
+	if (m_rubberBand)
+	{
+		ReleaseMouse();
+		{
+			wxClientDC dc(this);
+			PrepareDC(dc);
+			wxDCOverlay overlaydc(m_overlay, &dc);
+			overlaydc.Clear();
+		}
+		m_overlay.Reset();
+		m_rubberBand = false;
+
+		m_endPoint = event.GetPosition();
+
+		if (m_endPoint != m_startPoint)
+		{
+			m_selectedArea.SetLeftTop(m_startPoint);
+			m_selectedArea.SetRightBottom(m_endPoint);
+
+			Refresh();
+		}
+	}
 }
 
 
@@ -291,10 +316,26 @@ void PreviewWnd::OnLeftUp( wxMouseEvent& event )
 
 void PreviewWnd::OnMotion( wxMouseEvent& event )
 {
-////@begin wxEVT_MOTION event handler for ID_PREVIEWWND in PreviewWnd.
-    // Before editing this code, remove the block markers.
-    event.Skip();
-////@end wxEVT_MOTION event handler for ID_PREVIEWWND in PreviewWnd. 
+	if (m_rubberBand)
+	{
+		m_currentPoint = event.GetPosition();
+		wxRect newrect(m_startPoint, m_currentPoint);
+
+		wxClientDC dc(this);
+		PrepareDC(dc);
+
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+#ifdef __WXMAC__
+		dc.SetPen(*wxGREY_PEN);
+		dc.SetBrush(wxColour(192, 192, 192, 64));
+#else
+		dc.SetPen(wxPen(wxColour(255, 210, 2)/**wxLIGHT_GREY*/, 2));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+#endif
+
+		dc.DrawRectangle(newrect);
+	}
 }
 
 
@@ -329,19 +370,42 @@ void PreviewWnd::OnPaint( wxPaintEvent& event )
 	//dc.SetBackgroundMode(wxSOLID);//*/wxTRANSPARENT);
 	//dc.SetBackground(*wxBLACK_BRUSH);
 
-	dc.DrawBitmap(bg, 0, 0, false);
+	dc.DrawBitmap(m_bg, 0, 0, false);
 
 	wxRect rc = GetClientRect();
 
 #if wxUSE_GRAPHICS_CONTEXT
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(wxColour(0, 0, 0, 150)));
-	dc.DrawRectangle(rc);
+	dc.SetBrush(wxBrush(wxColour(0, 0, 0, 64)));
+
+	if (!m_selectedArea.IsEmpty())
+	{
+		wxRect top, bottom, left, right;
+
+		left = rc;
+		left.width = m_selectedArea.x;
+
+		top.SetTopLeft(wxPoint(m_selectedArea.x, 0));
+		top.SetBottomRight(m_selectedArea.GetTopRight());
+
+		right.SetTopLeft(wxPoint(m_selectedArea.x + m_selectedArea.width, 0));
+		right.SetBottomRight(rc.GetRightBottom());
+
+		bottom.SetTopLeft(m_selectedArea.GetBottomLeft());
+		bottom.SetBottomRight(wxPoint(m_selectedArea.x + m_selectedArea.width - 1, rc.height));
+
+		dc.DrawRectangle(left);
+		dc.DrawRectangle(top);
+		dc.DrawRectangle(bottom);
+		dc.DrawRectangle(right);
+	}
+	else
+		dc.DrawRectangle(rc);
 #endif
 
-	dc.SetPen(wxPen(wxColour(255, 210, 2), 4));
-	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	dc.DrawRectangle(rc);
+//	dc.SetPen(wxPen(wxColour(255, 210, 2), 4));
+//	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+//	dc.DrawRectangle(rc);
 
 	//int cx, cy;
 	//GetClientSize(&cx, &cy);
@@ -361,6 +425,11 @@ void PreviewWnd::OnKeyDown( wxKeyEvent& event )
 	if (event.GetKeyCode() == VK_ESCAPE)
 	{
 		Hide();
+		m_bg.Destroy();
+		m_selectedArea.x = 0;
+		m_selectedArea.y = 0;
+		m_selectedArea.width = 0;
+		m_selectedArea.height = 0;
 	}
 }
 
@@ -543,9 +612,9 @@ void PreviewWnd::onHookedKeyPressed(wxCommandEvent& event)
 	//wxImage screen(rc.width, rc.height, (BYTE*) pData, (BYTE*) pAlpha, false);
 	wxImage screen(rc.width, rc.height, (BYTE*) pData, false);
 
-	bg = screen.Mirror(false);
+	m_bg = screen.Mirror(false);
 
-	//bg.SaveFile("d:\\test.bmp");
+	//m_bg.SaveFile("d:\\test.bmp");
 	SetSize(rc);
 	Move(rc.x, rc.y);
 	//SetWindowStyle()

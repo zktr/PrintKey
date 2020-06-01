@@ -24,6 +24,7 @@
 #include "wx/gdicmn.h""
 #include "wx/taskbar.h"
 #include "wx/dcgraph.h"
+#include "wx/overlay.h"
 
 class PKTaskBarIcon : public wxTaskBarIcon
 {
@@ -148,7 +149,14 @@ private:
 #endif
 
 private:
-	wxImage bg;
+	wxImage m_bg;
+
+	wxOverlay    m_overlay;
+	bool         m_rubberBand;
+	wxPoint      m_startPoint;
+	wxPoint      m_currentPoint;
+	wxPoint      m_endPoint;
+	wxRect		 m_selectedArea;
 
 public:
 
